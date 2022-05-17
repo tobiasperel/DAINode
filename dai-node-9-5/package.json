@@ -1,0 +1,20 @@
+{
+  "name": "dai-node-9-5",
+  "version": "1.0.0",
+  "description": "proyecto-1",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start0": "node index.js",
+    "start1": "node index01.js",
+    "start2": "node index02.js",
+    "start3": "node index03.js",
+    "start4": "node index04.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "flags": "^0.1.3"
+  }
+}
