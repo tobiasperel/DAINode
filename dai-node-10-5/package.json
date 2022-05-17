@@ -6,8 +6,13 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "starte": "node index.js"
+    "start05": "node EJ05.js",
+    "start06": "node EJ06.js",
+    "start07": "node EJ07.js"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "currency-map-country": "^1.0.12"
+  }
 }
