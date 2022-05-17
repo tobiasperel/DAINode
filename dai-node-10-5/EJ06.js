@@ -1,7 +1,7 @@
-var url = 'http://www.ort.edu.ar:8080/alumnos/index.htm?curso=2022&mes=mayo'
+var url = 'http://www.ort.edu.ar:80ayo'
 
 function getAllUrlParams(url) {
-
+    try{
     // get query string from url (optional) or window
     var queryString = url ? url.split('?')[1] : window.location.search.slice(1);
     var primeraYsegundaParte = url ? url.split('?')[0] : window.location.search.slice(1);
@@ -35,7 +35,15 @@ function getAllUrlParams(url) {
     let array0 =[]
     array0.push(subObj)
     obj["parametros"] = subObj
+    
+    if(obj["host"].length == undefined || obj["pathname"].length == undefined || obj["parametros"].length == undefined ){
+        return console.error("error");
+    }
     return obj;
+    }
+    catch{
+        return console.error("error");
+    }
   }
 
 console.log(getAllUrlParams(url))
