@@ -5,5 +5,5 @@ function ObtenerMoneda(moneda){
     return data["name"]
 }
 
-let moneda = ObtenerMoneda("ARS")
+let moneda = ObtenerMoneda("USD")
 console.log(moneda)
