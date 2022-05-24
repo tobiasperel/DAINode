@@ -3,9 +3,16 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
+    "start": "node index.js",
+    "startIndex": "node index-select.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "pochi",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.1",
+    "mssql": "^8.1.1"
+  }
 }
