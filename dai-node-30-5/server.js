@@ -1,15 +1,14 @@
 import express from 'express'
-import cors from 'cors'
-import pizzaRouter from "./src/controller"
+//import cors from 'cors'
+import router from "./src/controller/pizzaController.js"
 
 const app = express()
 const port = 5000
 
-app.use(cors());
-//app.use(addNewHeader);
-
+//app.use(cors());
 app.use(express.json());
+app.use("/api/pizzas", router);
 
 app.listen(port, () => {
-    console.log("listening")
+    console.log(`listening on port ${port}`)
 })
