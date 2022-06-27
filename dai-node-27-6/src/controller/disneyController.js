@@ -1,39 +1,34 @@
 import { Router } from 'express'
-import disneyServices from "../services/disney-sevices.js"
+import DisneyServices from "../services/disney-sevices.js"
 
 const router = Router();
-const disneyServices = new disneyServices();
+const disneyServices = new DisneyServices();
 
 router.get('/auth/login', async(req,res) => {
     const pizza = await disneyServices.getById(req.params.id)
     return res.status(200).json(pizza)
 })
 
-router.get('characters/:nombre', async(req,res) => {
-    const personaje = await disneyServices.getByNombre(req.params.nombre)
-    return res.status(200).json(personaje)
-})
-
-router.get('characters/:edad', async(req,res) => {
-    const personajes = await disneyServices.getByEdad(req.params.edad)
+router.get('/characters', async(req,res) => {
+    let peliculasOSeries = req.query.peliculasOSeries
+    let edad = req.query.edad
+    let nombre = req.query.nombre
+    const personajes = await disneyServices.getByCharacters(peliculasOSeries,edad,nombre)
     return res.status(200).json(personajes)
 })
 
-router.get('characters/:movieTitle', async(req,res) => {
-    const personajes = await disneyServices.getByTituloPelicula(req.params.peliculasOSeries)
-    return res.status(200).json(personajes)
-})
-
-router.get('movies/:titulo', async(req,res) => {
-    const pelicula = await disneyServices.getByTitulo(req.params.titulo)
+router.get('/movies', async(req,res) => {
+    let titulo = req.query.titulo
+    let orden = req.query.orden
+    const pelicula = await disneyServices.getByMovie(titulo,orden)
     return res.status(200).json(pelicula)
 })
-
-router.get('movies/:orden', async(req,res) => {
-    const peliculas = await disneyServices.getByOrden(req.params.orden)
+/*
+router.get('/movies?orden', async(req,res) => {
+    const peliculas = await disneyServices.getByOrden(req.query.orden)
     return res.status(200).json(peliculas)
 })
-
+*/
 // router.post('', async(req,res) => {
 //     const pizza = await pizzaService.insert(req.body)
 //     return res.status(200).json(pizza)

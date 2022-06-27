@@ -17,41 +17,15 @@ class DisneyServices {
         }
         return returnEntry
     }
-    getByNombre = async(nombre) => {
+    getByCharacters = async(peliculasOSeries,edad,nombre) => {
         let returnEntry = null;
         try{
             let pool =  await sql.connect(config)
             let result = await pool.request()
                             .input('pNombre', sql.Int, nombre)
-                            .query("select * from Personajes WHERE nombre = @pNombre")
-            returnEntry = result.recordsets[0][0]
-        }
-        catch(error){
-            LogWriter(error)
-        }
-        return returnEntry
-    }
-    getByEdad = async(edad) => {
-        let returnEntry = null;
-        try{
-            let pool =  await sql.connect(config)
-            let result = await pool.request()
                             .input('pEdad', sql.Int, edad)
-                            .query("select * from Personajes WHERE edad = @pEdad")
-            returnEntry = result.recordsets[0][0]
-        }
-        catch(error){
-            LogWriter(error)
-        }
-        return returnEntry
-    }
-    getByTituloPelicula = async(peliculasOSeries) => {
-        let returnEntry = null;
-        try{
-            let pool =  await sql.connect(config)
-            let result = await pool.request()
                             .input('pPeliculasOSeries', sql.Int, peliculasOSeries)
-                            .query("select * from Personajes WHERE peliculasOSeries = @pPeliculasOSeries")
+                            .query("select * from Personajes WHERE nombre = @pNombre and edad = @pEdad and peliculasOSeries = @pPeliculasOSeries")
             returnEntry = result.recordsets[0][0]
         }
         catch(error){
@@ -59,26 +33,13 @@ class DisneyServices {
         }
         return returnEntry
     }
-    getByTitulo = async(titulo) => {
-        let returnEntry = null;
-        try{
-            let pool =  await sql.connect(config)
-            let result = await pool.request()
-                            .input('pTitulo', sql.titulo, titulo)
-                            .query("select * from Peliculas WHERE titulo = @pTitulo")
-            returnEntry = result.recordsets[0][0]
-        }
-        catch(error){
-            LogWriter(error)
-        }
-        return returnEntry
-    }
-    getByOrden = async(orden) => {
+    getByMovie= async(titulo,orden) => {
         let returnEntry = null;
         try{
             let pool = await sql.connect(config)
             let result = await pool.request()
-                            .query(`select * from Peliculas order by fechaDeCreacion ${orden}`)
+                            .input('pTitulo', sql.titulo, titulo)
+                            .query(`select * from Peliculas  WHERE titulo = @pTitulo order by fechaDeCreacion ${orden}`)
             returnEntry = result.recordsets[0]
         }
         catch(error){
