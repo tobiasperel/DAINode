@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import DisneyServices from "../services/disney-sevices.js"
-
+const queryString = require('query-string');
 const router = Router();
 const disneyServices = new DisneyServices();
 
@@ -10,6 +10,8 @@ router.get('/auth/login', async(req,res) => {
 })
 
 router.get('/characters', async(req,res) => {
+    let objeto = queryString.parse(parsedUrl.query);
+    console.log(objeto);
     let peliculasOSeries = req.query.peliculasOSeries
     let edad = req.query.edad
     let nombre = req.query.nombre

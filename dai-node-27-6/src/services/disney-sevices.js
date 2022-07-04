@@ -5,7 +5,7 @@ import Pelicula from './../models/pelicula.js';
 import LogWriter from '../modules/log-helper.js'
 
 class DisneyServices {
-    getAll = async() => {
+    getToken = async() => {
         let returnEntry = null;
         try{
             let pool = await sql.connect(config)
@@ -22,11 +22,12 @@ class DisneyServices {
         try{
             let pool =  await sql.connect(config)
             let result = await pool.request()
-                            .input('pNombre', sql.Int, nombre)
+                            .input('pNombre', sql.NChar, nombre)
                             .input('pEdad', sql.Int, edad)
-                            .input('pPeliculasOSeries', sql.Int, peliculasOSeries)
-                            .query("select * from Personajes WHERE nombre = @pNombre and edad = @pEdad and peliculasOSeries = @pPeliculasOSeries")
+                            .input('pPeliculasOSeries', sql.NChar, peliculasOSeries)
+                            .query("select * from Personaje WHERE nombre = @pNombre or edad = @pEdad or peliculasOSeries = @pPeliculasOSeries")
             returnEntry = result.recordsets[0][0]
+            
         }
         catch(error){
             LogWriter(error)
@@ -38,8 +39,8 @@ class DisneyServices {
         try{
             let pool = await sql.connect(config)
             let result = await pool.request()
-                            .input('pTitulo', sql.titulo, titulo)
-                            .query(`select * from Peliculas  WHERE titulo = @pTitulo order by fechaDeCreacion ${orden}`)
+                            .input('pTitulo', sql.NChar, titulo)
+                            .query(`select * from Pelicula  WHERE titulo = @pTitulo order by fechaDeCreacion ${orden}`)
             returnEntry = result.recordsets[0]
         }
         catch(error){
