@@ -5,28 +5,52 @@ import Pelicula from './../models/pelicula.js';
 import LogWriter from '../modules/log-helper.js'
 
 class DisneyServices {
-    getToken = async() => {
-        let returnEntry = null;
+    putToken = async(Usuario) => {
+        
+        function rand() {
+            return Math.random().toString(36).substr(2); // remove `0.`
+        };
+        
+        function token12() {
+            return rand() + rand(); // to make it longer
+        };
+        
+        let token = token12(); // "bnh5yzdirjinqaorq0ox1tf383nb3xr"
+        console.log(token);
+        let rowsAffected = 0;
         try{
             let pool = await sql.connect(config)
-            let result = await pool.request().query("select * from Pizzas")
-            returnEntry = result.recordsets[0]
+            console.log(Usuario);
+            let result = await pool.request()
+                                        .input('pId', sql.Int, Usuario.Id)
+                                        .input('pNombre', sql.NChar, Usuario.nombre)
+                                        .input('pPin', sql.NChar, Usuario.pin) 
+                                        .input('pToken', sql.NChar, token) 
+                                        .query("UPDATE usuario SET token = @pToken WHERE Usuario.nombre = @pNombre and Usuario.pin  = @pPin")
+            rowsAffected = result.rowsAffected
         }
         catch(error){
             LogWriter(error)
         }
-        return returnEntry
+        return rowsAffected,token
     }
-    getByCharacters = async(peliculasOSeries,edad,nombre) => {
+    getByCharacters = async(character) => {
         let returnEntry = null;
+        let query = "select * from Personaje WHERE 1=1 "
+        if (character.nombre) {
+            query = query + `AND nombre = '${character.nombre}' `
+        }
+        if (character.edad) {
+            query = query + `AND edad = ${character.edad} `
+        }
+        if (character.peliculasOSeries) {
+            query = query + `AND peliculasOSeries = '${character.peliculasOSeries}' `
+        }
         try{
             let pool =  await sql.connect(config)
             let result = await pool.request()
-                            .input('pNombre', sql.NChar, nombre)
-                            .input('pEdad', sql.Int, edad)
-                            .input('pPeliculasOSeries', sql.NChar, peliculasOSeries)
-                            .query("select * from Personaje WHERE nombre = @pNombre or edad = @pEdad or peliculasOSeries = @pPeliculasOSeries")
-            returnEntry = result.recordsets[0][0]
+                                    .query(query)
+            returnEntry = result.recordsets[0]
             
         }
         catch(error){
@@ -34,13 +58,19 @@ class DisneyServices {
         }
         return returnEntry
     }
-    getByMovie= async(titulo,orden) => {
+    getByMovie= async(movies) => {
         let returnEntry = null;
+        let query = "select * from Pelicula  WHERE 1=1 "
+        if (movies.titulo) {
+            query = query + `AND titulo = '${movies.titulo}' `
+        }
+        if (movies.orden) {
+            query = query + `order by fechaDeCreacion ${movies.orden} `
+        }
         try{
             let pool = await sql.connect(config)
             let result = await pool.request()
-                            .input('pTitulo', sql.NChar, titulo)
-                            .query(`select * from Pelicula  WHERE titulo = @pTitulo order by fechaDeCreacion ${orden}`)
+                            .query(query)
             returnEntry = result.recordsets[0]
         }
         catch(error){
