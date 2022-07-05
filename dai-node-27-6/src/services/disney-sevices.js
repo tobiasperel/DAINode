@@ -34,6 +34,23 @@ class DisneyServices {
         }
         return rowsAffected,token
     }
+
+    verificacion(token){
+        let returnEntry = null;
+        let pool =  await sql.connect(config)
+            let result = await pool.request()
+                                    .input('pToken', sql.NChar, token)
+                                    .query("select * from Personaje where token = @pToken")
+        returnEntry = result.recordsets[0]
+        if (returnEntry == null){
+            return false
+        }
+        if ( returnEntry["tokenExperationDate"] < Date.now){
+            return false
+        }
+        return true
+    }
+
     getByCharacters = async(character) => {
         let returnEntry = null;
         let query = "select * from Personaje WHERE 1=1 "
@@ -58,7 +75,8 @@ class DisneyServices {
         }
         return returnEntry
     }
-    getByMovie= async(movies) => {
+    getByMovie= async(movies,token) => {
+        let sePudo = this.verificacion(token)
         let returnEntry = null;
         let query = "select * from Pelicula  WHERE 1=1 "
         if (movies.titulo) {
@@ -67,10 +85,15 @@ class DisneyServices {
         if (movies.orden) {
             query = query + `order by fechaDeCreacion ${movies.orden} `
         }
+        console.log(query)
         try{
             let pool = await sql.connect(config)
+            console.log(query)
+
             let result = await pool.request()
                             .query(query)
+                            console.log(query)
+
             returnEntry = result.recordsets[0]
         }
         catch(error){
@@ -78,6 +101,7 @@ class DisneyServices {
         }
         return returnEntry
     }
+
     insert = async(pizza) => {
         let rowsAffected = 0;
         try{

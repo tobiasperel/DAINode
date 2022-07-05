@@ -9,12 +9,13 @@ router.put('/auth/login', async(req,res) => {
 })
 
 router.get('/characters', async(req,res) => {
+    
     const personajes = await disneyServices.getByCharacters(req.query)
     return res.status(200).json(personajes)
 })
 
 router.get('/movies', async(req,res) => {
-    const pelicula = await disneyServices.getByMovie(req.query)
+    const pelicula = await disneyServices.getByMovie(req.query, req.headers["authorization"])
     return res.status(200).json(pelicula)
 })
 export default router;
