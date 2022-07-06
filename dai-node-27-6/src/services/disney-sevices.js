@@ -25,8 +25,9 @@ class DisneyServices {
                                         .input('pId', sql.Int, Usuario.Id)
                                         .input('pNombre', sql.NChar, Usuario.nombre)
                                         .input('pPin', sql.NChar, Usuario.pin) 
-                                        .input('pToken', sql.NChar, token) 
-                                        .query("UPDATE usuario SET token = @pToken WHERE Usuario.nombre = @pNombre and Usuario.pin  = @pPin")
+                                        .input('pToken', sql.NChar, token)
+                                        .input('pTokenExpira', sql.DateTime, new Date(new Date().getTime() + (1000 * 60 * 60 * 24)))
+                                        .query("UPDATE usuario SET token = @pToken and tokenExpira = @pTokenExpira WHERE Usuario.nombre = @pNombre and Usuario.pin  = @pPin")
             rowsAffected = result.rowsAffected
         }
         catch(error){
@@ -35,7 +36,7 @@ class DisneyServices {
         return rowsAffected,token
     }
 
-    verificacion(token){
+    verificacion = async(token) => {
         let returnEntry = null;
         let pool =  await sql.connect(config)
             let result = await pool.request()
@@ -43,12 +44,12 @@ class DisneyServices {
                                     .query("select * from Personaje where token = @pToken")
         returnEntry = result.recordsets[0]
         if (returnEntry == null){
-            return false
+            return 401
         }
         if ( returnEntry["tokenExperationDate"] < Date.now){
-            return false
+            return 403
         }
-        return true
+        return 200
     }
 
     getByCharacters = async(character) => {
@@ -63,20 +64,23 @@ class DisneyServices {
         if (character.peliculasOSeries) {
             query = query + `AND peliculasOSeries = '${character.peliculasOSeries}' `
         }
-        try{
+        //try{
             let pool =  await sql.connect(config)
             let result = await pool.request()
                                     .query(query)
             returnEntry = result.recordsets[0]
             
-        }
+        /*}
         catch(error){
             LogWriter(error)
-        }
+        }*/
         return returnEntry
     }
     getByMovie= async(movies,token) => {
-        let sePudo = this.verificacion(token)
+        let estado = this.verificacion(token)
+        if (estado  != true){
+            return null,estado
+        }
         let returnEntry = null;
         let query = "select * from Pelicula  WHERE 1=1 "
         if (movies.titulo) {
@@ -99,7 +103,7 @@ class DisneyServices {
         catch(error){
             LogWriter(error)
         }
-        return returnEntry
+        return returnEntry,estado
     }
 
     insert = async(pizza) => {
