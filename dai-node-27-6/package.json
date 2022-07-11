@@ -5,6 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "dev": "C:\\Users\\46028491\\AppData\\Roaming\\npm\\nodemon.cmd server.js",
     "start": "node server.js",
     "startIndex": "node index-select.js",
     "test": "echo \"Error: no test specified\" && exit 1"

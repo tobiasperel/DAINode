@@ -19,6 +19,11 @@ router.post('/characters', async(req,res) => {
     return res.status(respuesta["estadoRespuesta"]).json(respuesta["value"])
 })
 
+router.put('/characters/:id', async(req,res) => {
+    const respuesta = await disneyServices.updateCharacter(req.body,req.params.id,req.headers["authorization"])
+    return res.status(respuesta["estadoRespuesta"]).json(respuesta["value"])
+})
+
 router.get('/movies', async(req,res) => {
     const respuesta = await disneyServices.getByMovie(req.query, req.headers["authorization"])
     return res.status(respuesta["estadoRespuesta"]).json(respuesta["value"])

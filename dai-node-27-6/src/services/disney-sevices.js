@@ -110,6 +110,33 @@ class DisneyServices {
         return resupuesta
     }
 
+    updateCharacter = async(character,id,token) => {
+        let estado = await verificacion(token)
+        let resupuesta = {value: null, estadoRespuesta : estado}
+        if (estado  != 200){
+            return resupuesta
+        }
+        let rowsAffected = 0;
+        try{
+            let pool = await sql.connect(config)
+            let result = await pool.request()
+                                        .input('pId', sql.Int, id)
+                                        .input('pImagen', sql.NChar, character.imagen)
+                                        .input('pNombre', sql.NChar, character.nombre)                                        
+                                        .input('pEdad', sql.Int, character.edad)
+                                        .input('pPeso', sql.Int, character.peso)
+                                        .input('pHistoria', sql.NChar, character.historia)
+                                        .input('pPeliculasOSeries', sql.NChar, character.peliculasOSeries)
+                                        .query("Update Personaje Set imagen = @pImagen, nombre = @pNombre, edad = @pEdad, peso = @pPeso ,historia = @pHistoria ,peliculasOSeries = @pPeliculasOSeries" )
+            rowsAffected = result.rowsAffected
+        }
+        catch(error){
+            LogWriter(error)
+        }
+        resupuesta = {value: rowsAffected, estadoRespuesta : estado}
+        return resupuesta
+    }
+
     getByMovie= async(movies,token) => {
         let estado = await verificacion(token)
         let resupuesta = {value: null, estadoRespuesta : estado}
@@ -165,24 +192,33 @@ class DisneyServices {
         return resupuesta
     }
 
-
-    insert = async(pizza) => {
+    updateMovie = async(movie,id,token) => {
+        let estado = await verificacion(token)
+        let resupuesta = {value: null, estadoRespuesta : estado}
+        if (estado  != 200){
+            return resupuesta
+        }
         let rowsAffected = 0;
-        try{
+        //try{
             let pool = await sql.connect(config)
             let result = await pool.request()
-                                        .input('pNombre', sql.NChar, pizza.Nombre)
-                                        .input('pLibreGluten', sql.Bit, pizza.LibreGluten)                                        
-                                        .input('pImporte', sql.Float, pizza.Importe)
-                                        .input('pDescripcion', sql.NChar, pizza.Descripcion)
-                                        .query("Insert into pizzas(Nombre, LibreGluten, Importe, Descripcion) values (@pNombre, @pLibreGluten, @pImporte, @pDescripcion)")
+                                        .input('pId', sql.Int, id)
+                                        .input('pImagen', sql.NChar, movie.imagen)
+                                        .input('pNombre', sql.NChar, movie.nombre)                                        
+                                        .input('pEdad', sql.Int, movie.edad)
+                                        .input('pPeso', sql.Int, movie.peso)
+                                        .input('pHistoria', sql.NChar, movie.historia)
+                                        .input('pPeliculasOSeries', sql.NChar, movie.peliculasOSeries)
+                                        .query("Update Pelicula Set imagen = @pImagen, nombre = @pNombre, edad = @pEdad, peso = @pPeso ,historia = @pHistoria ,peliculasOSeries = @pPeliculasOSeries" )
             rowsAffected = result.rowsAffected
-        }
+        /*}
         catch(error){
             LogWriter(error)
-        }
-        return rowsAffected
+        }*/
+        resupuesta = {value: rowsAffected, estadoRespuesta : estado}
+        return resupuesta
     }
+
     update = async(pizza,id) => {
         let rowsAffected = 0;
         try{
