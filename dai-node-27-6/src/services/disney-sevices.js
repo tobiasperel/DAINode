@@ -4,6 +4,23 @@ import Personaje from './../models/personaje.js';
 import Pelicula from './../models/pelicula.js';
 import LogWriter from '../modules/log-helper.js'
 
+async function verificacion(token){
+    console.log(token);
+    let returnEntry = null;
+    let pool =  await sql.connect(config)
+        let result = await pool.request()
+                                .input('pToken', sql.NChar, token)
+                                .query("select * from Usuario where Token = @pToken")
+    returnEntry = result.recordsets[0]
+    if (returnEntry.length == 0 ){
+        return 401
+    }
+    if ( returnEntry["TokenExperationDate"] < Date.now){
+        return 403
+    }
+    return 200
+}
+
 class DisneyServices {
     putToken = async(Usuario) => {
         
@@ -27,7 +44,7 @@ class DisneyServices {
                                         .input('pPin', sql.NChar, Usuario.pin) 
                                         .input('pToken', sql.NChar, token)
                                         .input('pTokenExpira', sql.DateTime, new Date(new Date().getTime() + (1000 * 60 * 60 * 24)))
-                                        .query("UPDATE usuario SET token = @pToken and tokenExpira = @pTokenExpira WHERE Usuario.nombre = @pNombre and Usuario.pin  = @pPin")
+                                        .query("UPDATE usuario SET token = @pToken, TokenExperationDate = @pTokenExpira WHERE Usuario.nombre = @pNombre and Usuario.pin  = @pPin")
             rowsAffected = result.rowsAffected
         }
         catch(error){
@@ -36,23 +53,12 @@ class DisneyServices {
         return rowsAffected,token
     }
 
-    verificacion = async(token) => {
-        let returnEntry = null;
-        let pool =  await sql.connect(config)
-            let result = await pool.request()
-                                    .input('pToken', sql.NChar, token)
-                                    .query("select * from Personaje where token = @pToken")
-        returnEntry = result.recordsets[0]
-        if (returnEntry == null){
-            return 401
+    getByCharacters = async(character,token) => {
+        let estado = await verificacion(token)
+        let resupuesta = {value: null, estadoRespuesta : estado}
+        if (estado  != 200){
+            return resupuesta
         }
-        if ( returnEntry["tokenExperationDate"] < Date.now){
-            return 403
-        }
-        return 200
-    }
-
-    getByCharacters = async(character) => {
         let returnEntry = null;
         let query = "select * from Personaje WHERE 1=1 "
         if (character.nombre) {
@@ -74,12 +80,14 @@ class DisneyServices {
         catch(error){
             LogWriter(error)
         }*/
-        return returnEntry
+        resupuesta = {value: returnEntry, estadoRespuesta : estado}
+        return resupuesta
     }
     getByMovie= async(movies,token) => {
-        let estado = this.verificacion(token)
-        if (estado  != true){
-            return null,estado
+        let estado = await verificacion(token)
+        let resupuesta = {value: null, estadoRespuesta : estado}
+        if (estado  != 200){
+            return resupuesta
         }
         let returnEntry = null;
         let query = "select * from Pelicula  WHERE 1=1 "
@@ -92,18 +100,17 @@ class DisneyServices {
         console.log(query)
         try{
             let pool = await sql.connect(config)
-            console.log(query)
 
             let result = await pool.request()
                             .query(query)
-                            console.log(query)
 
             returnEntry = result.recordsets[0]
         }
         catch(error){
             LogWriter(error)
         }
-        return returnEntry,estado
+        resupuesta = {value: returnEntry, estadoRespuesta : estado}
+        return resupuesta
     }
 
     insert = async(pizza) => {
