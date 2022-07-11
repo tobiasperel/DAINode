@@ -14,8 +14,20 @@ router.get('/characters', async(req,res) => {
     return res.status(respuesta["estadoRespuesta"]).json(respuesta["value"])
 })
 
+router.post('/characters', async(req,res) => {
+    const respuesta = await disneyServices.insertCharacter(req.body,req.headers["authorization"])
+    return res.status(respuesta["estadoRespuesta"]).json(respuesta["value"])
+})
+
 router.get('/movies', async(req,res) => {
     const respuesta = await disneyServices.getByMovie(req.query, req.headers["authorization"])
     return res.status(respuesta["estadoRespuesta"]).json(respuesta["value"])
 })
+
+router.post('/movies', async(req,res) => {
+    const respuesta = await disneyServices.insertmovie(req.body,req.headers["authorization"])
+    return res.status(respuesta["estadoRespuesta"]).json(respuesta["value"])
+})
+
+
 export default router;

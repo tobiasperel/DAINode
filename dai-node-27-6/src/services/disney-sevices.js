@@ -70,19 +70,46 @@ class DisneyServices {
         if (character.peliculasOSeries) {
             query = query + `AND peliculasOSeries = '${character.peliculasOSeries}' `
         }
-        //try{
+        try{
             let pool =  await sql.connect(config)
             let result = await pool.request()
                                     .query(query)
             returnEntry = result.recordsets[0]
             
-        /*}
+        }
         catch(error){
             LogWriter(error)
-        }*/
+        }
         resupuesta = {value: returnEntry, estadoRespuesta : estado}
         return resupuesta
     }
+
+    insertCharacter = async(character, token) => {
+        let estado = await verificacion(token)
+        let resupuesta = {value: null, estadoRespuesta : estado}
+        if (estado  != 200){
+            return resupuesta
+        }
+        let rowsAffected = 0;
+        try{
+            let pool = await sql.connect(config)
+            let result = await pool.request()
+                                        .input('pImagen', sql.NChar, character.imagen)
+                                        .input('pNombre', sql.NChar, character.nombre)                                        
+                                        .input('pEdad', sql.Int, character.edad)
+                                        .input('pPeso', sql.Int, character.peso)
+                                        .input('pHistoria', sql.NChar, character.historia)
+                                        .input('pPeliculasOSeries', sql.NChar, character.peliculasOSeries)
+                                        .query("Insert into Personaje (imagen, nombre, edad, peso,historia,peliculasOSeries) values (@pImagen,@pNombre, @pEdad, @pPeso, @pHistoria,@pPeliculasOSeries )")
+            rowsAffected = result.rowsAffected
+        }
+        catch(error){
+            LogWriter(error)
+        }
+        resupuesta = {value: rowsAffected, estadoRespuesta : estado}
+        return resupuesta
+    }
+
     getByMovie= async(movies,token) => {
         let estado = await verificacion(token)
         let resupuesta = {value: null, estadoRespuesta : estado}
@@ -112,6 +139,32 @@ class DisneyServices {
         resupuesta = {value: returnEntry, estadoRespuesta : estado}
         return resupuesta
     }
+
+    insertmovie = async(movie, token) => {
+        let estado = await verificacion(token)
+        let resupuesta = {value: null, estadoRespuesta : estado}
+        if (estado  != 200){
+            return resupuesta
+        }
+        let rowsAffected = 0;
+        try{
+            let pool = await sql.connect(config)
+            let result = await pool.request()
+                                        .input('pImagen', sql.NChar, movie.imagen)
+                                        .input('pTitulo', sql.NChar, movie.titulo)                                        
+                                        .input('pFechaDeCreacion', sql.DateTime, movie.fechaDeCreacion)
+                                        .input('pCalificacion', sql.Int, movie.calificacion)
+                                        .input('pPersonajesAsociados', sql.NChar, movie.PersonajesAsociados)
+                                        .query("Insert into Pelicula (imagen, titulo, fechaDeCreacion, calificacion,PersonajesAsociados) values (@pImagen,@pTitulo, @pFechaDeCreacion, @pCalificacion, @pPersonajesAsociados )")
+            rowsAffected = result.rowsAffected
+        }
+        catch(error){
+            LogWriter(error)
+        }
+        resupuesta = {value: rowsAffected, estadoRespuesta : estado}
+        return resupuesta
+    }
+
 
     insert = async(pizza) => {
         let rowsAffected = 0;
