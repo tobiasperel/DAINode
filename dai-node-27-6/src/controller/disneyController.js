@@ -45,7 +45,7 @@ router.put('/movies/:id', async(req,res) => {
 })
 
 router.delete('/movies/:id', async(req,res) => {
-    const respuesta = await disneyServices.deleteByIdMovies(req.params.id,req.headers["authorization"])
+    const respuesta = await disneyServices.deleteByIdMovies(req.body,req.params.id,req.headers["authorization"])
     return res.status(respuesta["estadoRespuesta"]).json(respuesta["value"])
 })
 
