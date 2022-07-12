@@ -24,6 +24,11 @@ router.put('/characters/:id', async(req,res) => {
     return res.status(respuesta["estadoRespuesta"]).json(respuesta["value"])
 })
 
+router.delete('/characters/:id', async(req,res) => {
+    const respuesta = await disneyServices.deleteByIdCharacter(req.params.id,req.headers["authorization"])
+    return res.status(respuesta["estadoRespuesta"]).json(respuesta["value"])
+})
+
 router.get('/movies', async(req,res) => {
     const respuesta = await disneyServices.getByMovie(req.query, req.headers["authorization"])
     return res.status(respuesta["estadoRespuesta"]).json(respuesta["value"])
@@ -33,6 +38,17 @@ router.post('/movies', async(req,res) => {
     const respuesta = await disneyServices.insertmovie(req.body,req.headers["authorization"])
     return res.status(respuesta["estadoRespuesta"]).json(respuesta["value"])
 })
+
+router.put('/movies/:id', async(req,res) => {
+    const respuesta = await disneyServices.updateMovie(req.body,req.params.id,req.headers["authorization"])
+    return res.status(respuesta["estadoRespuesta"]).json(respuesta["value"])
+})
+
+router.delete('/movies/:id', async(req,res) => {
+    const respuesta = await disneyServices.deleteByIdMovies(req.params.id,req.headers["authorization"])
+    return res.status(respuesta["estadoRespuesta"]).json(respuesta["value"])
+})
+
 
 
 export default router;
