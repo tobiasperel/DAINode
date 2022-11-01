@@ -1,4 +1,4 @@
 # DAINode01
 
 
-hola polshu
+hola chino
